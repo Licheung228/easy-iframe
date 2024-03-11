@@ -22,6 +22,10 @@
     "iframe",
     "CORS communication"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Licheung228/easy-iframe"
+  },
   "author": "licheung228",
   "license": "ISC",
   "devDependencies": {
