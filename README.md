@@ -21,8 +21,7 @@ npm install easy-iframe
 - 控制台会出现 `🚀>>> connect success` 的提示。
 - 如果没有出现任何提示。则说明父子链接不成功。
 - 链接不成功并不影响 `iframe` 的显示。但是事件的注册和监听等无法使用。
-
-
+- 双方未调用 init 方法
 
 **2-targetOrigin 设置时必须要求 父级的`targetOrigin` 和 子级的`window.origin` 全等**
 
