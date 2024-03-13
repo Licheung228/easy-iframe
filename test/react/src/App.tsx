@@ -37,13 +37,28 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
-      <button
-        onClick={() => {
-          subordinate.send('xixihaha', 'to father')
+      <main
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          marginTop: '20px'
         }}
       >
-        to father
-      </button>
+        <button
+          onClick={() => {
+            subordinate.send('xixihaha', 'to father')
+          }}
+        >
+          to father
+        </button>
+        <button
+          onClick={() => {
+            subordinate.send('xixihaha', ['to father one', 'two'])
+          }}
+        >
+          to father a Array
+        </button>
+      </main>
     </>
   )
 }

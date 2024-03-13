@@ -45,7 +45,7 @@ export class Superior {
   }
 
   // 初始化工作
-  init(srcObj: { query?: Record<string, any>; hash?: string }) {
+  init(srcObj?: { query?: Record<string, any>; hash?: string }) {
     if (srcObj) {
       this.setSrc(srcObj)
     }

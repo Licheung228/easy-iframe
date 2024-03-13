@@ -5,7 +5,6 @@
 用于iframe(跨域)通信的简易工具
 
 
-
 ## 安装
 
 ```bash
@@ -13,15 +12,14 @@ npm install easy-iframe
 ```
 
 
-
 ## 注意
 
 **1-链接问题**
 
-- 控制台会出现 `🚀>>> connect success` 的提示。
+- 链接成功时，控制台会出现 `🚀>>> connect success` 的提示。
 - 如果没有出现任何提示。则说明父子链接不成功。
 - 链接不成功并不影响 `iframe` 的显示。但是事件的注册和监听等无法使用。
-- 双方未调用 init 方法
+- 父子双方其中一方未调用 init 方法，会导致链接不成功，提示语不显示。
 
 **2-targetOrigin 设置时必须要求 父级的`targetOrigin` 和 子级的`window.origin` 全等**
 
@@ -48,7 +46,9 @@ console.log(window.origin) // ==>'http://127.0.0.1:3000/'
 
 时会导致 iframe 重新加载以及 `easy-iframe` 重新链接。建议使用事件系统，在子级监听事件。并更改 `location.href`。详情请看下方。
 
+**4-子传父数据类型为非普通类型时导致通信失败**
 
+仅某些情况(较老项目中)会出现这种错误，使用 `JSON.stringify` 即可解决
 
 ## 使用
 
@@ -88,10 +88,13 @@ const subordinate = new Subordinate({
   }
 })
 // 初始化
-subordinate.init()
+subordinate.init(/* 同setSrc，可以传入query/hash */)
 
 // 开启监听 navi 事件
 subordinate.subscribe('hello', (payload: string) => {
   console.log(payload, 'world')
 })
 ```
+
+## 案例：
+[案例代码](https://github.com/Licheung228/easy-iframe/tree/main/test)

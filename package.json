@@ -1,6 +1,6 @@
 {
   "name": "easy-iframe",
-  "version": "0.0.5-alpha.2",
+  "version": "0.0.6-alpha.1",
   "description": "iframe communication",
   "type": "module",
   "main": "dist/index.js",
