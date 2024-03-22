@@ -108,8 +108,6 @@ console.log(window.origin) // ==>'http://127.0.0.1:3000/'
 
 // 反之同理
 ```
-**3-init**
-init/stop 方法仅和事件机制有关。并不会影响到 frame 的 dom
 
 **3-直接通过 `setSrc` 设置 iframe** 
 

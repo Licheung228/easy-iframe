@@ -49,26 +49,32 @@ export class Superior {
     if (srcObj) {
       this.setSrc(srcObj)
     }
+
+    if (this.connection) {
+      console.log('%c🚀>>>', 'color: red;', 'connect active')
+      return Promise.resolve()
+    }
+
     return new Promise<void>((resolve, reject) => {
       this.frame.addEventListener('load', () => {
         this.frame.contentWindow!.postMessage(
           { type: window.origin, payload: window.origin },
           this.targetOrigin.origin
         )
-
-        const init = (payload: any, type?: string) => {
-          if (type && type === this.targetOrigin.origin && payload) {
-            this.connection = true
-            resolve()
-            console.log('%c🚀>>>', 'color: red;', 'connect success')
-          } else reject(new Error('connect fail'))
-          // 初始化只有一次
-          this.unsubscribe(this.targetOrigin.origin)
-        }
-
-        this.subscribe(this.targetOrigin.origin, init)
-        window.addEventListener('message', this.mitt.execute)
       })
+
+      const init = (payload: any, type?: string) => {
+        if (type && type === this.targetOrigin.origin && payload) {
+          this.connection = true
+          resolve()
+          console.log('%c🚀>>>', 'color: red;', 'connect success')
+        } else reject(new Error('connect fail'))
+        // 初始化只有一次
+        this.unsubscribe(this.targetOrigin.origin)
+      }
+
+      this.subscribe(this.targetOrigin.origin, init)
+      window.addEventListener('message', this.mitt.execute)
     })
   }
 
