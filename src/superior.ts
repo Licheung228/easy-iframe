@@ -59,12 +59,12 @@ export class Superior {
         const init = (payload: any, type?: string) => {
           if (type && type === this.targetOrigin.origin && payload) {
             this.connection = true
+            resolve()
             console.log('%c🚀>>>', 'color: red;', 'connect success')
           } else reject(new Error('connect fail'))
           // 初始化只有一次
           this.unsubscribe(this.targetOrigin.origin)
         }
-        resolve()
 
         this.subscribe(this.targetOrigin.origin, init)
         window.addEventListener('message', this.mitt.execute)
@@ -79,13 +79,13 @@ export class Superior {
         { type, payload },
         this.targetOrigin.origin
       )
-    } else this.onError && this.onError({ message: 'disconnect', payload })
+    } else this.onError && this.onError(new Error('disconnect'))
   }
 
   // frame 的 src 的 query || hash 设置
   setSrc({ query, hash }: { query?: Record<string, any>; hash?: string }) {
-    if (!this.mitt.isMounted || !this.frame) {
-      return this.onError && this.onError({ message: 'disconnect' })
+    if (!this.frame) {
+      return this.onError && this.onError(new Error('setSrc is not ready'))
     }
 
     if (query) {
