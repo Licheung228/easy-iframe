@@ -1,6 +1,6 @@
 {
   "name": "easy-iframe",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "iframe communication",
   "type": "module",
   "main": "dist/index.js",
@@ -16,7 +16,8 @@
     "require": "./dist/index.cjs"
   },
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "re-publish": "nrm use npm && pnpm build && npm publish"
   },
   "keywords": [
     "iframe",

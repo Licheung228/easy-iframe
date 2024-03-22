@@ -1,8 +1,6 @@
 import Mitt from './mitt'
 
 export class Subordinate {
-  // 链接状态
-  connection: boolean
   // 通信父目标
   readonly targetOrigin: string
   // 通信任务栈
@@ -18,17 +16,13 @@ export class Subordinate {
     if (targetOrigin === window.origin)
       throw new Error('Subordinate: targetOrigin不能为当前源')
     this.targetOrigin = targetOrigin
-    this.connection = false
     this.onError = onError
     this.mitt = new Mitt({ typeList, onError, origin: targetOrigin })
   }
 
   // 初始化方法
   init() {
-    if (this.connection) return
-
-    const init = (payload: any) => {
-      this.connection = this.targetOrigin === payload
+    const init = () => {
       this.send(window.origin, true)
       this.unsubscribe(this.targetOrigin)
     }
@@ -39,7 +33,7 @@ export class Subordinate {
 
   // 通信方法
   send(type: string, payload: any) {
-    if (this.connection && this.mitt.isMounted) {
+    if (this.mitt.isMounted) {
       const w = window.parent.window
       w.postMessage({ type, payload }, this.targetOrigin)
     } else this.onError && this.onError({ message: 'disconnect', payload })
@@ -48,7 +42,6 @@ export class Subordinate {
   // 停止监听方法
   stop() {
     this.mitt.clear()
-    this.connection = false
     window.removeEventListener('message', this.mitt.execute)
   }
 
