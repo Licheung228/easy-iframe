@@ -46,7 +46,7 @@ document.getElementById('btn-close').addEventListener('click', function() {
   superior.unsubscribe('hello')
   // 停止所有监听，停止监听并不会卸载 frame。
   superior.stop()
-  // 卸载，停止所有监听，并且卸载 frame
+  // 卸载，停止所有监听，并且卸载 frame。卸载后需要重新 new 才能再次获取 frame
   superior.unmount()
 })
 ```

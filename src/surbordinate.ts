@@ -25,6 +25,8 @@ export class Subordinate {
 
   // 初始化方法
   init() {
+    if (this.connection) return
+
     const init = (payload: any) => {
       this.connection = this.targetOrigin === payload
       this.send(window.origin, true)
@@ -46,6 +48,7 @@ export class Subordinate {
   // 停止监听方法
   stop() {
     this.mitt.clear()
+    this.connection = false
     window.removeEventListener('message', this.mitt.execute)
   }
 

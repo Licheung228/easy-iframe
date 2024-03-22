@@ -56,12 +56,13 @@ export class Superior {
     }
 
     return new Promise<void>((resolve, reject) => {
-      this.frame.addEventListener('load', () => {
+      const request = () => {
         this.frame.contentWindow!.postMessage(
           { type: window.origin, payload: window.origin },
           this.targetOrigin.origin
         )
-      })
+      }
+      this.frame.addEventListener('load', request)
 
       const init = (payload: any, type?: string) => {
         if (type && type === this.targetOrigin.origin && payload) {
@@ -71,6 +72,7 @@ export class Superior {
         } else reject(new Error('connect fail'))
         // 初始化只有一次
         this.unsubscribe(this.targetOrigin.origin)
+        this.frame.removeEventListener('load', request)
       }
 
       this.subscribe(this.targetOrigin.origin, init)
@@ -109,6 +111,7 @@ export class Superior {
   // 停止监听方法
   stop() {
     this.mitt.clear()
+    this.connection = false
     window.removeEventListener('message', this.mitt.execute)
   }
 
