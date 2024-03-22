@@ -6,7 +6,7 @@ import './App.css'
 
 const subordinate = new Subordinate({
   targetOrigin: 'http://localhost:5174',
-  onError: err => {
+  onError: (err: string) => {
     console.log(err)
   }
 })
@@ -17,7 +17,7 @@ function App() {
   const [bool, setBool] = useState(true)
 
   subordinate.subscribe('changeBool', (payload: boolean) => {
-    console.log('%cMark🔸>>>', 'color: red;', payload)
+    console.log('%cMark🔸>>>', 'color: red;', 'event:changeBool', payload)
     setBool(payload)
   })
 
@@ -28,7 +28,7 @@ function App() {
   return (
     <>
       <div>
-        <div>{token === '123' && bool ? token + '已鉴权' : '无权限'}</div>
+        <div>{bool && token === '123' ? token + '已鉴权' : '无权限'}</div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
