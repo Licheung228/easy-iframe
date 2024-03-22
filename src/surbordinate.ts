@@ -43,9 +43,9 @@ export class Subordinate {
     } else this.onError && this.onError({ message: 'disconnect', payload })
   }
 
-  // 卸载方法
-  unmount() {
-    this.mitt.unmount()
+  // 停止监听方法
+  stop() {
+    this.mitt.clear()
     window.removeEventListener('message', this.mitt.execute)
   }
 

@@ -28,24 +28,26 @@ const superior = new Superior({
 })
 
 // 初始化，链接的关键。可以在任何时机进行初始化。只要保证在subordinate实例化后和iframe挂载前。 
-subordinate.init(/* 此处可以如同 setSrc 一样设置 iframe 的 src */)
+superior.init(/* 此处可以如同 setSrc 一样设置 iframe 的 src */)
 
 // setSrc 可以随时设置 iframe 的 query 或者 hash
-subordinate.setSrc({ query:{ token: '456' } }) // http://localhost:5173/?token=123 ==> http://localhost:5173/?token=456
+superior.setSrc({ query:{ token: '456' } }) // http://localhost:5173/?token=123 ==> http://localhost:5173/?token=456
 
 // 向子级发送消息
 document.getElementById('btn').addEventListener('click', function() {
-  subordinate.send('hello', 'hello')
+  superior.send('hello', 'hello')
 })
 
 // 取消监听/卸载
 document.getElementById('btn-close').addEventListener('click', function() {
   // 取消特定的任务监听
-  subordinate.unsubscribe('hello', fn)
+  superior.unsubscribe('hello', fn)
   // 取消整个类型的监听
-  subordinate.unsubscribe('hello')
-  // 卸载 easy-iframe
-  subordinate.unmount()
+  superior.unsubscribe('hello')
+  // 停止所有监听，停止监听并不会卸载 frame。
+  superior.stop()
+  // 卸载，停止所有监听，并且卸载 frame
+  superior.unmount()
 })
 ```
 
@@ -106,6 +108,8 @@ console.log(window.origin) // ==>'http://127.0.0.1:3000/'
 
 // 反之同理
 ```
+**3-init**
+init/stop 方法仅和事件机制有关。并不会影响到 frame 的 dom
 
 **3-直接通过 `setSrc` 设置 iframe** 
 

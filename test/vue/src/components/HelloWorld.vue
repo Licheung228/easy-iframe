@@ -1,20 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Superior } from '../../../../'
+import superior from '../easy-iframe'
 
 const container = ref<HTMLDivElement>()
 const fromSon = ref('')
-
-// 实例化
-const superior = new Superior({
-  targetOrigin: 'http://localhost:5173',
-  query: {
-    token: 123
-  },
-  onError: (error: unknown) => {
-    console.log('%cMark🔸>>>', 'color: red;', 'error', error)
-  }
-})
 
 // 初始化
 superior.frame.width = '100%'
@@ -43,8 +32,13 @@ const sendEvent = () => {
 // 未知属性
 const unknowtype = () => superior.send('xiba', '123')
 
+// 停止监听
+const stop = () => {
+  superior.stop()
+}
+
 // 卸载
-const unmout = () => {
+const unmount = () => {
   superior.unmount()
 }
 
@@ -62,7 +56,8 @@ onMounted(() => {
   >
     <button @click="setSrc">changeSrc</button>
     <button @click="sendEvent">changeWithEvent</button>
-    <button @click="unmout">unmount father</button>
+    <button @click="stop">stop</button>
+    <button @click="unmount">unmount father</button>
     <button @click="unknowtype">unknow type</button>
   </main>
 </template>

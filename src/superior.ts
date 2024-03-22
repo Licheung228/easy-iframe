@@ -3,7 +3,7 @@ import Mitt from './mitt'
 export class Superior {
   connection: boolean
   readonly targetOrigin: URL
-  readonly frame: HTMLIFrameElement
+  frame: HTMLIFrameElement
   private onError?: (err: any) => void
   private query?: Record<string, any>
   private mitt: Mitt
@@ -59,12 +59,12 @@ export class Superior {
         const init = (payload: any, type?: string) => {
           if (type && type === this.targetOrigin.origin && payload) {
             this.connection = true
-            resolve()
             console.log('%c🚀>>>', 'color: red;', 'connect success')
           } else reject(new Error('connect fail'))
           // 初始化只有一次
           this.unsubscribe(this.targetOrigin.origin)
         }
+        resolve()
 
         this.subscribe(this.targetOrigin.origin, init)
         window.addEventListener('message', this.mitt.execute)
@@ -74,7 +74,7 @@ export class Superior {
 
   // 发送消息
   send(type: any, payload: any) {
-    if (this.connection && this.mitt.isMounted) {
+    if (this.connection && this.mitt.isMounted && this.frame) {
       this.frame.contentWindow!.postMessage(
         { type, payload },
         this.targetOrigin.origin
@@ -84,7 +84,7 @@ export class Superior {
 
   // frame 的 src 的 query || hash 设置
   setSrc({ query, hash }: { query?: Record<string, any>; hash?: string }) {
-    if (!this.mitt.isMounted) {
+    if (!this.mitt.isMounted || !this.frame) {
       return this.onError && this.onError({ message: 'disconnect' })
     }
 
@@ -100,9 +100,17 @@ export class Superior {
     }
   }
 
-  // 卸载方法
-  unmount() {
-    this.mitt.unmount()
+  // 停止监听方法
+  stop() {
+    this.mitt.clear()
     window.removeEventListener('message', this.mitt.execute)
+  }
+
+  unmount() {
+    this.mitt.clear()
+    if (this.frame) {
+      this.frame.remove()
+      this.frame = null as any
+    }
   }
 }

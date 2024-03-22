@@ -17,7 +17,7 @@ class Mitt {
 
   // 链接状态
   get isMounted() {
-    return !!this.stacks
+    return this.stacks && this.stacks.size
   }
 
   // 监听器
@@ -71,9 +71,14 @@ class Mitt {
     }
   }
 
-  unmount() {
+  clear() {
     if (this.stacks) {
       this.stacks.clear()
+    }
+  }
+
+  unmount() {
+    if (this.stacks) {
       this.stacks = null as any
     }
   }
