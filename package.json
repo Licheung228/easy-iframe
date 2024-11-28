@@ -1,0 +1,51 @@
+{
+  "name": "@likcheung/easy-iframe",
+  "version": "0.0.1",
+  "description": "iframe communication",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "./dist/index.js",
+  "browser": "./dist/index.iffe.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "nrm use npm && pnpm build"
+  },
+  "keywords": [
+    "iframe",
+    "CORS communication"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Licheung228/easy-iframe"
+  },
+  "author": "licheung228",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-env": "^7.23.9",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rollup": "^4.9.6",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "rollup-plugin-uglify": "^6.0.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
