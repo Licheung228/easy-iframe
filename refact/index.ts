@@ -4,8 +4,6 @@ class Common extends Mitter {
   constructor(options: MitterOptions) {
     super({ onError: options.onError })
   }
-
-  dispatch() {}
 }
 
 interface AOptions {
@@ -19,21 +17,31 @@ class A extends Common {
 
   constructor({ targetOrigin, onError }: AOptions) {
     super({ onError })
-    this.targetOrigin = targetOrigin
     this.iframe = document.createElement('iframe')
+    this.targetOrigin = targetOrigin
     this.iframe.width = '100%'
     this.iframe.height = '100%'
   }
 
   private iframeLoaded() {
-    this.iframe.onload = () => {}
-    this.iframe.onerror = this.onError as any
-    return this.iframe
+    return new Promise((resolve, reject) => {
+      this.iframe.onload = () => {
+        resolve(true)
+      }
+      this.iframe.onerror = () => {
+        reject(new Error('iframe load error'))
+      }
+
+      this.iframe.src = this.targetOrigin
+    })
   }
 
-  async init() {
-    this.iframeLoaded()
-    this.iframe.src = this.targetOrigin
+  init() {
+    this.iframeLoaded().then(re => {
+      console.log(re)
+      this.iframe.contentWindow!.postMessage('init', '*')
+    })
+
     return this.iframe
   }
 }
