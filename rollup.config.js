@@ -3,60 +3,70 @@ import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import json from '@rollup/plugin-json'
 import babel from '@rollup/plugin-babel'
-import { uglify } from 'rollup-plugin-uglify'
+import terser from '@rollup/plugin-terser'
+import del from 'rollup-plugin-delete'
 
 const extensions = ['.js', '.ts']
+const input = 'src/index.ts'
 
-export default [
+// 共用插件配置
+const commonPlugins = [
+  // del({ targets: 'dist' }),
+  typescript({
+    useTsconfigDeclarationDir: true,
+  }),
+  resolve({ extensions }),
+  commonjs(),
+  json(),
+]
+
+// 生产环境判断
+const isProd = process.env.NODE_ENV === 'production'
+console.log(isProd)
+
+// 压缩配置
+const minifyPlugin = isProd
+  ? terser({
+      compress: {
+        pure_getters: true,
+        unsafe: true,
+        unsafe_comps: true,
+      },
+    })
+  : null
+
+const configs = [
   // CommonJS
   {
-    input: 'src/index.ts',
+    input,
     output: {
       file: 'dist/index.cjs',
-      format: 'cjs'
+      format: 'cjs',
+      sourcemap: !isProd,
     },
-    plugins: [
-      typescript({
-        useTsconfigDeclarationDir: true
-      }),
-      resolve({ extensions }),
-      uglify(),
-      commonjs(),
-      json()
-    ]
+    plugins: [...commonPlugins, minifyPlugin].filter(Boolean),
   },
   // ESM
   {
-    input: 'src/index.ts',
+    input,
     output: {
-      file: 'dist/index.js',
-      format: 'es'
+      file: 'dist/index.mjs',
+      format: 'es',
+      sourcemap: !isProd,
     },
-    plugins: [
-      typescript({
-        useTsconfigDeclarationDir: true
-      }),
-      resolve({ extensions }),
-      commonjs(),
-      json(),
-      uglify()
-    ]
+    plugins: [...commonPlugins, minifyPlugin].filter(Boolean),
   },
-  // Browser-compatible
+  // IIFE
   {
-    input: 'src/index.ts',
+    input,
     output: {
-      file: 'dist/index.iffe.js',
+      file: 'dist/index.min.js',
       format: 'iife',
-      name: 'easyIframe'
+      name: 'easyIframe',
+      sourcemap: !isProd,
     },
     plugins: [
-      typescript({
-        useTsconfigDeclarationDir: true
-      }),
-      resolve({ extensions }),
-      commonjs(),
-      json(),
+      ...commonPlugins,
       babel({
         exclude: 'node_modules/**',
         extensions,
@@ -65,12 +75,14 @@ export default [
           [
             '@babel/preset-env',
             {
-              targets: '> 0.25%, not dead'
-            }
-          ]
-        ]
+              targets: '> 0.25%, not dead',
+            },
+          ],
+        ],
       }),
-      uglify()
-    ]
-  }
+      minifyPlugin,
+    ].filter(Boolean),
+  },
 ]
+
+export default configs

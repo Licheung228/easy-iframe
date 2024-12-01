@@ -1,2 +1,2 @@
-export * from './superior'
-export * from './surbordinate'
+export * from './main'
+export * from './constant'

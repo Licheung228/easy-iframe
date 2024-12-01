@@ -1,5 +1,5 @@
-import { A, type B } from '.'
-import type { Message } from '../mitter/type'
+import { MainAPP, type SubAPP } from './main'
+import type { Message } from './mitter/type'
 import type { PostMessageMessage } from './type'
 
 /**
@@ -7,7 +7,10 @@ import type { PostMessageMessage } from './type'
  * @param _this 当前实例
  * @param window_this 父窗口 | iframe 窗口 的 window 对象
  */
-export const initPostMessage = (_this: A | B, window_this: Window) => {
+export const initPostMessage = (
+  _this: MainAPP | SubAPP,
+  window_this: Window,
+) => {
   // 绑定在A｜B 实例上的 postMessage 方法
   _this.postMessage = (message: Message) => {
     try {
@@ -15,7 +18,7 @@ export const initPostMessage = (_this: A | B, window_this: Window) => {
       const data: string = JSON.stringify({
         ...message,
         // 新增 source 属性
-        source: '__EASY_IFRAME__'
+        source: '__EASY_IFRAME__',
       } as PostMessageMessage)
       // 调用父窗口 | iframe 窗口 的 postMessage 方法
       window_this?.postMessage.call(
@@ -23,13 +26,13 @@ export const initPostMessage = (_this: A | B, window_this: Window) => {
         data,
         // 传递 targetOrigin 参数
         {
-          targetOrigin: _this.targetOrigin
-        }
+          targetOrigin: _this.targetOrigin,
+        },
       )
     } catch {
       _this.onError?.({
         type: 'json stringify error',
-        payload: message
+        payload: message,
       })
     }
   }
@@ -38,8 +41,8 @@ export const initPostMessage = (_this: A | B, window_this: Window) => {
  * 注册 message 事件
  * @param _this 当前实例
  */
-export const initListener = (_this: A | B) => {
-  window.addEventListener('message', event => {
+export const initListener = (_this: MainAPP | SubAPP) => {
+  window.addEventListener('message', (event) => {
     // easy iframe 发送的消息是 json 字符串
     if (typeof event.data !== 'string') return
     try {
@@ -54,7 +57,7 @@ export const initListener = (_this: A | B) => {
       // 解析失败
       _this.onError?.({
         type: 'json parse error',
-        payload: event.data
+        payload: event.data,
       })
     }
   })
