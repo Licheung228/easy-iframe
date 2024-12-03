@@ -1,3 +1,3 @@
-import configs from '@likcheung/common-build'
+import configs from '@likcheung/rollup-common-build'
 
 export default configs('EasyIframe')

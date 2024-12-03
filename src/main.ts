@@ -1,9 +1,12 @@
-import { Mitter } from './mitter/mitter'
+import { Mitter } from '@likcheung/shared'
+import { poll } from '@likcheung/shared'
 import { initListener, initPostMessage } from './init'
-import { poll } from './utils/utils'
 import { DEFAULT_MESSAGE_TYPE } from './constant'
 import type { Options, InitOptions } from './type'
-import type { Message, MitterOptions } from './mitter/type'
+import type {
+  Message,
+  MitterOptions,
+} from '@likcheung/shared/src/mitter/type'
 
 class Common extends Mitter {
   postMessage?: (message: Message<DEFAULT_MESSAGE_TYPE | string>) => void
@@ -22,12 +25,15 @@ class MainAPP extends Common {
 
   constructor({ targetOrigin, onError }: Options) {
     super({ onError, targetOrigin })
-    this.iframe = document.createElement('iframe')
+    this.iframe = window.document.createElement('iframe')
     this.iframe.width = '100%'
     this.iframe.height = '100%'
   }
 
-  init(container: HTMLElement, initOptions?: InitOptions) {
+  init(
+    container: HTMLElement,
+    initOptions?: InitOptions,
+  ): HTMLIFrameElement {
     initListener(this)
 
     // 设置 iframe 的 src 属性, 触发 iframe 的 onload 事件
@@ -37,11 +43,13 @@ class MainAPP extends Common {
     const pollConnect = poll(
       () => {
         // 如果用户注册了 CONNECTING 事件，则触发
-        this.has(DEFAULT_MESSAGE_TYPE.CONNECTING) &&
+        if (this.has(DEFAULT_MESSAGE_TYPE.CONNECTING)) {
           this.emit(DEFAULT_MESSAGE_TYPE.CONNECTING, {
             type: DEFAULT_MESSAGE_TYPE.CONNECTING,
             payload: 'easy iframe is connecting',
           })
+        }
+
         // 不断向子应用发送 init 消息，直到子应用初始化成功
         this.postMessage?.({
           type: DEFAULT_MESSAGE_TYPE.INIT,
@@ -58,11 +66,13 @@ class MainAPP extends Common {
       this.connection = true
       pollConnect.cancel()
       // 如果用户注册了 CONNECTED 事件，则触发
-      this.has(DEFAULT_MESSAGE_TYPE.CONNECTED) &&
+      if (this.has(DEFAULT_MESSAGE_TYPE.CONNECTED)) {
         this.emit(DEFAULT_MESSAGE_TYPE.CONNECTED, {
           type: DEFAULT_MESSAGE_TYPE.CONNECTED,
           payload: e,
         })
+      }
+
       this.off(DEFAULT_MESSAGE_TYPE.INIT, initSuccess)
     }
     this.on(DEFAULT_MESSAGE_TYPE.INIT, initSuccess)
@@ -82,7 +92,7 @@ class SubAPP extends Common {
     super({ onError, targetOrigin })
   }
 
-  init() {
+  init(): void {
     initPostMessage(this, window.parent)
     initListener(this)
     this.on(DEFAULT_MESSAGE_TYPE.INIT, () => {

@@ -32,6 +32,10 @@
   },
   "author": "licheung228 <licheung228@outlook.com>",
   "devDependencies": {
-    "@likcheung/rollup-common-build": "workspace:*"
+    "@likcheung/rollup-common-build": "workspace:*",
+    "@likcheung/shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "@lickcheung/shared": "^0.0.1"
   }
 }
