@@ -75,10 +75,15 @@ class MainAPP extends Common {
       pollConnect.cancel()
       // 子应用会发送自己的window.origin，父应用与自己接收的targetOrigin进行对比
       if (subOrigin !== this.targetOrigin) {
-        this.onError?.({
+        const error = {
           type: 'From: MainAPP',
           reason: `Origin Not Match, the targetOrigin be set ${this.targetOrigin}, but SubAPP's origin is ${subOrigin}`,
-        })
+        }
+        if (this.onError) {
+          this.onError(error)
+        } else {
+          console.error(error)
+        }
         return this.off(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
       }
 
@@ -116,10 +121,15 @@ class SubAPP extends Common {
     this.on(DEFAULT_MESSAGE_TYPE_INIT, (mainOrigin: string) => {
       // 父应用会发送自己的 window.location.origin ，与自己的 targetOrigin 进行对比
       if (mainOrigin !== this.targetOrigin) {
-        this.onError?.({
+        const error = {
           type: 'From: SubApp',
           reason: `Origin Not Match, the targetOrigin be set ${this.targetOrigin}, but MainAPP's origin is ${mainOrigin}`,
-        })
+        }
+        if (this.onError) {
+          this.onError(error)
+        } else {
+          console.error(error)
+        }
       }
       this.postMessage?.({
         type: DEFAULT_MESSAGE_TYPE_INIT,
