@@ -3,10 +3,7 @@ import { poll } from '@likcheung/shared'
 import { initListener, initPostMessage } from './init'
 import { DEFAULT_MESSAGE_TYPE } from './constant'
 import type { Options, InitOptions } from './type'
-import type {
-  Message,
-  MitterOptions,
-} from '@likcheung/shared/src/mitter/type'
+import type { Message, MitterOptions } from '@likcheung/shared'
 import { DEFAULT_MESSAGE_TYPE_INIT } from './_constant'
 
 // 抽象一个类作为公共
@@ -21,7 +18,6 @@ abstract class Common extends Mitter {
 }
 
 class MainAPP extends Common {
-  duration: number = 1000
   iframe: HTMLIFrameElement
   src: string
 
