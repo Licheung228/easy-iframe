@@ -8,7 +8,8 @@ import type {
   MitterOptions,
 } from '@likcheung/shared/src/mitter/type'
 
-class Common extends Mitter {
+// 抽象一个类作为公共
+abstract class Common extends Mitter {
   postMessage?: (message: Message<DEFAULT_MESSAGE_TYPE | string>) => void
   targetOrigin: string
 

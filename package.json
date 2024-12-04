@@ -1,6 +1,6 @@
 {
   "name": "easy-iframe",
-  "version": "2.0.0-alpha-2",
+  "version": "2.0.1",
   "description": "iframe solution",
   "type": "module",
   "files": [
@@ -22,11 +22,10 @@
     "micro front"
   ],
   "author": "licheung228 <licheung228@outlook.com>",
-  "devDependencies": {
-    "@likcheung/rollup-common-build": "workspace:*",
+  "dependencies": {
     "@likcheung/shared": "workspace:*"
   },
-  "peerDependencies": {
-    "@likcheung/shared": "workspace:*"
+  "devDependencies": {
+    "@likcheung/rollup-common-build": "workspace:*"
   }
 }
