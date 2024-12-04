@@ -19,6 +19,7 @@ export const initPostMessage = (
         // 新增 source 属性
         source: '__EASY_IFRAME__',
       })
+
       // 调用父窗口 | iframe 窗口 的 postMessage 方法
       window_this?.postMessage.call(
         window_this,
@@ -46,7 +47,9 @@ export const initListener = (_this: MainAPP | SubAPP): void => {
     if (typeof event.data !== 'string') return
     try {
       // 解析消息
-      const data: Message = JSON.parse(event.data)
+      const data: Message & { source: '__EASY_IFRAME__' } = JSON.parse(
+        event.data,
+      )
       // 消息来源必须是 easy iframe
       if (data?.source !== '__EASY_IFRAME__') return
       // 触发事件
