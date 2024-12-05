@@ -6,7 +6,7 @@ import type { Options, InitOptions } from './type'
 import type { Message, MitterOptions } from '@likcheung/shared'
 import { DEFAULT_MESSAGE_TYPE_INIT } from './_constant'
 
-// 抽象一个类作为公共
+// Comomon, abstarct class
 abstract class Common extends Mitter {
   postMessage?: (message: Message<DEFAULT_MESSAGE_TYPE | string>) => void
   targetOrigin?: string = '*'
@@ -38,13 +38,13 @@ class MainAPP extends Common {
   ): HTMLIFrameElement {
     initListener(this)
 
-    // 设置 iframe 的 src 属性, 触发 iframe 的 onload 事件
+    // set src to iframe, for trigger iframe.onload
     this.iframe.src = this.src
     container.append(this.iframe)
 
-    // 轮询链接行为
+    // polling connect
     const pollConnectFn = () => {
-      // 如果用户注册了 CONNECTING 事件，则触发
+      // if DEFAULT_MESSAGE_TYPE.CONNECTING event had registered, emit it
       if (this.has(DEFAULT_MESSAGE_TYPE.CONNECTING)) {
         this.emit(DEFAULT_MESSAGE_TYPE.CONNECTING, {
           type: DEFAULT_MESSAGE_TYPE.CONNECTING,
@@ -52,13 +52,13 @@ class MainAPP extends Common {
         })
       }
 
-      // 不断向子应用发送 init 消息，直到子应用初始化成功，携带自己的origin过去，来确认双方的origin配置没问题
+      // send init message to sub app, until sub app is init, payload is main app origin, use to sub app check sub's targetOrigin
       this.postMessage?.({
         type: DEFAULT_MESSAGE_TYPE_INIT,
         payload: window.location.origin,
       })
     }
-    // 获取轮询控制器
+    // polling controller
     const pollConnect = poll(
       pollConnectFn,
       initOptions || {
@@ -66,11 +66,12 @@ class MainAPP extends Common {
         interval: 1000,
       },
     )
-    // 监听来自子应用的消息，初始化成功后，停止轮询
+    // the init success handler, when init success, stop polling and check the sub app targetOrigin
+    // must check targetOrigin, main app's targetOrigin maybe not equal to sub app's targetOrigin
     const initSuccess = (subOrigin: string) => {
       pollConnect.cancel()
       // 子应用会发送自己的window.origin，父应用与自己接收的targetOrigin进行对比
-      if (subOrigin !== this.targetOrigin) {
+      if (this.targetOrigin !== '*' && subOrigin !== this.targetOrigin) {
         const error = {
           type: 'From: MainAPP',
           reason: `Origin Not Match, the targetOrigin be set ${this.targetOrigin}, but SubAPP's origin is ${subOrigin}`,
@@ -83,7 +84,7 @@ class MainAPP extends Common {
         return this.off(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
       }
 
-      // 如果用户注册了 CONNECTED 事件，则触发
+      // if DEFAULT_MESSAGE_TYPE.CONNECTED had be registered, emit it
       if (this.has(DEFAULT_MESSAGE_TYPE.CONNECTED)) {
         this.emit(DEFAULT_MESSAGE_TYPE.CONNECTED, {
           type: DEFAULT_MESSAGE_TYPE.CONNECTED,
@@ -93,12 +94,12 @@ class MainAPP extends Common {
 
       this.off(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
     }
-    // 等待子应用的init回馈
+    // wait for sub app init
     this.on(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
     this.iframe.onload = () => {
-      // 绑定 postMessage 方法
+      // init postMessage, must before load, if not iframe.contentWindow maybe null
       initPostMessage(this, this.iframe.contentWindow!)
-      // 开始轮询连接
+      // start polling
       pollConnect.start().catch(this.onError)
     }
 
@@ -115,8 +116,8 @@ class SubAPP extends Common {
     initPostMessage(this, window.parent)
     initListener(this)
     this.on(DEFAULT_MESSAGE_TYPE_INIT, (mainOrigin: string) => {
-      // 父应用会发送自己的 window.location.origin ，与自己的 targetOrigin 进行对比
-      if (mainOrigin !== this.targetOrigin) {
+      // verify origin, main app origin is mainApp's window.location.origin, it should be same as subApp's targetOrigin
+      if (this.targetOrigin !== '*' && mainOrigin !== this.targetOrigin) {
         const error = {
           type: 'From: SubApp',
           reason: `Origin Not Match, the targetOrigin be set ${this.targetOrigin}, but MainAPP's origin is ${mainOrigin}`,

@@ -2,29 +2,29 @@ import type { MainAPP, SubAPP } from './main'
 import type { Message } from '@likcheung/shared/src/mitter/type'
 
 /**
- * 初始化 postMessage 方法
- * @param _this 当前实例
- * @param window_this 父窗口 | iframe 窗口 的 window 对象
+ * init postMessage
+ * @param _this instance. -todo maybe should use bind...
+ * @param window_this main app | sub app 's window context
  */
 export const initPostMessage = (
   _this: MainAPP | SubAPP,
   window_this: Window,
 ): void => {
-  // 绑定在A｜B 实例上的 postMessage 方法
+  // assignment postMessage
   _this.postMessage = (message: Message) => {
     try {
-      // 将 message 转换为 json 字符串
+      // trans message to json
       const data: string = JSON.stringify({
         ...message,
-        // 新增 source 属性
+        // all message should be signed by easy-iframe
         source: '__EASY_IFRAME__',
       })
 
-      // 调用父窗口 | iframe 窗口 的 postMessage 方法
+      // use window.postMessage to send message
       window_this?.postMessage.call(
         window_this,
         data,
-        // 传递 targetOrigin 参数
+        // targetOrigin:
         {
           targetOrigin: _this.targetOrigin,
         },
@@ -38,25 +38,25 @@ export const initPostMessage = (
   }
 }
 /**
- * 注册 message 事件
- * @param _this 当前实例
+ * init listener
+ * @param _this instance of MainAPP or SubAPP
  */
 export const initListener = (_this: MainAPP | SubAPP): void => {
   window.addEventListener('message', (event) => {
-    // easy iframe 发送的消息是 json 字符串
+    // the data must be string from easy-iframe, in postMessage the data had be stringify
     if (typeof event.data !== 'string') return
     try {
-      // 解析消息
+      // parse the data
       const data: Message & { source: '__EASY_IFRAME__' } = JSON.parse(
         event.data,
       )
-      // 消息来源必须是 easy iframe
+      // verify the source
       if (data?.source !== '__EASY_IFRAME__') return
-      // 触发事件
+      // emit event
       const { type, payload } = data
       _this.emit(type, payload)
     } catch {
-      // 解析失败
+      // fail to parse the data, emit error
       _this.onError?.({
         type: 'json parse error',
         payload: event.data,
