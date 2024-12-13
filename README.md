@@ -53,6 +53,8 @@ error callback
   - `maxAttempts` - maximum attempts times of polling connect
   - `timeout` - time limit of polling connect
 
+every handler should after `init` complete. you can use `DEFAULT_MESSAGE_TYPE.CONNECTED` to listen connect complete.
+
 ### `postMessage`
 
 emit another app's event, accept one param <Message>
