@@ -46,10 +46,10 @@ class MainAPP extends Common {
     const pollConnectFn = () => {
       // if DEFAULT_MESSAGE_TYPE.CONNECTING event had registered, emit it
       if (this.has(DEFAULT_MESSAGE_TYPE.CONNECTING)) {
-        this.emit(DEFAULT_MESSAGE_TYPE.CONNECTING, {
-          type: DEFAULT_MESSAGE_TYPE.CONNECTING,
-          payload: 'easy iframe is connecting',
-        })
+        this.emit<string>(
+          DEFAULT_MESSAGE_TYPE.CONNECTING,
+          'easy iframe is connecting',
+        )
       }
 
       // send init message to sub app, until sub app is init, payload is main app origin, use to sub app check sub's targetOrigin
@@ -86,16 +86,13 @@ class MainAPP extends Common {
 
       // if DEFAULT_MESSAGE_TYPE.CONNECTED had be registered, emit it
       if (this.has(DEFAULT_MESSAGE_TYPE.CONNECTED)) {
-        this.emit(DEFAULT_MESSAGE_TYPE.CONNECTED, {
-          type: DEFAULT_MESSAGE_TYPE.CONNECTED,
-          payload: subOrigin,
-        })
+        this.emit<string>(DEFAULT_MESSAGE_TYPE.CONNECTED, subOrigin)
       }
 
       this.off(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
     }
     // wait for sub app init
-    this.on(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
+    this.on<string>(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
     this.iframe.onload = () => {
       // init postMessage, must before load, if not iframe.contentWindow maybe null
       initPostMessage(this, this.iframe.contentWindow!)
@@ -115,7 +112,7 @@ class SubAPP extends Common {
   init(): void {
     initPostMessage(this, window.parent)
     initListener(this)
-    this.on(DEFAULT_MESSAGE_TYPE_INIT, (mainOrigin: string) => {
+    this.on<string>(DEFAULT_MESSAGE_TYPE_INIT, (mainOrigin: string) => {
       // verify origin, main app origin is mainApp's window.location.origin, it should be same as subApp's targetOrigin
       if (this.targetOrigin !== '*' && mainOrigin !== this.targetOrigin) {
         const error = {
