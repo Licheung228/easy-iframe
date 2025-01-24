@@ -1,5 +1,5 @@
 import type { MainAPP, SubAPP } from './main'
-import type { Message } from '@likcheung/shared/src/mitter/type'
+import type { Message } from './utils/mitter/type'
 
 /**
  * init postMessage

@@ -1,10 +1,12 @@
-import { Mitter } from '@likcheung/shared'
-import { poll } from '@likcheung/shared'
+import { Mitter } from './utils/mitter'
+import { poll } from './utils/poll'
 import { initListener, initPostMessage } from './init'
-import { DEFAULT_MESSAGE_TYPE } from './constant'
+import {
+  DEFAULT_MESSAGE_TYPE,
+  DEFAULT_MESSAGE_TYPE_INIT,
+} from './constant'
 import type { Options, InitOptions } from './type'
-import type { Message, MitterOptions } from '@likcheung/shared'
-import { DEFAULT_MESSAGE_TYPE_INIT } from './_constant'
+import type { Message, MitterOptions } from './utils/mitter'
 
 // Comomon, abstarct class
 abstract class Common extends Mitter {

@@ -1,0 +1,13 @@
+node_modules
+.idea
+.vscode
+.DS_Store
+
+.git/node_modules/**
+/dist/
+/dist*
+/public/*
+/docs/*
+/docs/**/*
+/plop/**/*
+CHANGELOG

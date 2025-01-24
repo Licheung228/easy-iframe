@@ -1,0 +1,21 @@
+:root {
+  --lic-color-primary: #696996;
+  --lic-color-primary-hover: #58587d;
+  --lic-color-primary-deep: #2f2f44;
+  --lic-color-primary-highlight: #7a7ab3;
+  --lic-color-success: #4caf50;
+  --lic-color-success-hover: #43a047;
+  --lic-color-info: #2196f3;
+  --lic-color-info-hover: #1e88e5;
+  --lic-color-error: #f44336;
+  --lic-color-error-hover: #e53935;
+  --lic-color-text: #333333;
+  --lic-color-text-inverse: #ffffff;
+  --lic-color-text-muted: #777777;
+  --lic-color-text-disabled: #aaaaaa;
+  --lic-color-background: #fafafa;
+  --lic-color-background-muted: #eeeeee;
+  --lic-color-border: #dddddd;
+  --lic-color-border-hover: #cccccc;
+  --lic-color-shadow: rgba(0, 0, 0, 0.15);
+}

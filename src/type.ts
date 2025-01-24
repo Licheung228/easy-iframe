@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import type { PollOptions } from '@likcheung/shared'
+import type { PollOptions } from './utils/poll'
 export interface Options {
   targetOrigin?: string
   onError?: (err: any) => void

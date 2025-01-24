@@ -1,0 +1,10 @@
+BG_COLOR='\e[42m' # 背景色
+RESET='\e[0m'     # 重置所有格式
+
+npx tsc
+
+printf "\n${BG_COLOR}${FG_COLOR} >>>>>> TS Check Success <<<<<< ${RESET}\r\n\n"
+
+pnpm run lint
+
+printf "\n${BG_COLOR}${FG_COLOR} >>>>>> Code Lint Success <<<<<< ${RESET}\r\n\n"
