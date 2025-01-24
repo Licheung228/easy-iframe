@@ -1,6 +1,0 @@
-BG_COLOR='\e[42m'
-RESET='\e[0m'
-
-npx --no -- commitlint --edit $1
-
-printf "\n${BG_COLOR}${FG_COLOR} >>>>>> Commit Lint Success <<<<<< ${RESET}\n"
