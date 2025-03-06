@@ -6,4 +6,4 @@ export interface Options {
 export type InitOptions = Pick<
   PollOptions,
   'interval' | 'maxAttempts' | 'timeout'
->
+> & { query?: object }

@@ -1,7 +1,7 @@
 easy-iframe2
 <a href="https://www.licuii.xyz">
-  <img 
-    src="http://cdn.licuii.xyz/self/lic-icon.png" 
+  <img
+    src="http://cdn.licuii.xyz/self/lic-icon.png"
     alt="lic-logo"
     width="50"
   />
@@ -32,7 +32,9 @@ error callback
 
 the main app origin
 
-optional, default is `"*"`, u should set it for safe.
+optional, default is `"*"`, will be used targetOrigin of postMessage
+
+if not set or set to `"*"`, the sub app will accept any origin from main app
 
 #### `onError`
 
@@ -52,6 +54,7 @@ error callback
   - `interval` - polling interval
   - `maxAttempts` - maximum attempts times of polling connect
   - `timeout` - time limit of polling connect
+  - `query` - query string of iframe src
 
 every handler should after `init` complete. you can use `DEFAULT_MESSAGE_TYPE.CONNECTED` to listen connect complete.
 
@@ -64,7 +67,8 @@ be like:
 ```ts
 /* in main app */
 const main = new MainAPP({ src: 'http://subapp.com' })
-main.init(document.querySelect('#iframeContainer'), { interval: 1000 })
+// iframe src is http://subapp.com?id=123
+main.init(document.querySelector('#iframeContainer'), { interval: 1000, query: { id: '123' } })
 // postMessage to emit 'count_change' event of sub app
 main.postMessage({ type: 'count_change', payload: 123 })
 
@@ -72,7 +76,7 @@ main.postMessage({ type: 'count_change', payload: 123 })
 const sub = new SubAPP({ targetOrigin: 'mainapp.com' })
 sub.init()
 sub.on('count_change', (e) => {
-  document.querySelect('count').innerText = e
+  document.querySelector('count').innerText = e
 })
 ```
 

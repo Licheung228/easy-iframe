@@ -1,4 +1,4 @@
-import type { MainAPP, SubAPP } from './main'
+import type { Common } from './common'
 import type { Message } from './utils/mitter/type'
 
 /**
@@ -7,7 +7,7 @@ import type { Message } from './utils/mitter/type'
  * @param window_this main app | sub app 's window context
  */
 export const initPostMessage = (
-  _this: MainAPP | SubAPP,
+  _this: Common,
   window_this: Window,
 ): void => {
   // assignment postMessage
@@ -41,7 +41,7 @@ export const initPostMessage = (
  * init listener
  * @param _this instance of MainAPP or SubAPP
  */
-export const initListener = (_this: MainAPP | SubAPP): void => {
+export const initListener = (_this: Common): void => {
   window.addEventListener('message', (event) => {
     // the data must be string from easy-iframe, in postMessage the data had be stringify
     if (typeof event.data !== 'string') return

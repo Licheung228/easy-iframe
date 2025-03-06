@@ -1,23 +1,8 @@
-import { Mitter } from './utils/mitter'
 import { poll } from './utils/poll'
-import { initListener, initPostMessage } from './init'
-import {
-  DEFAULT_MESSAGE_TYPE,
-  DEFAULT_MESSAGE_TYPE_INIT,
-} from './constant'
+import { DEFAULT_MESSAGE_TYPE } from './constant'
 import type { Options, InitOptions } from './type'
-import type { Message, MitterOptions } from './utils/mitter'
-
-// Comomon, abstarct class
-abstract class Common extends Mitter {
-  postMessage?: (message: Message<DEFAULT_MESSAGE_TYPE | string>) => void
-  targetOrigin?: string = '*'
-
-  constructor(options: MitterOptions & Options) {
-    super({ onError: options.onError })
-    this.targetOrigin = options.targetOrigin || '*'
-  }
-}
+import { Common } from './common'
+import { initPostMessage } from './init'
 
 class MainAPP extends Common {
   iframe: HTMLIFrameElement
@@ -38,25 +23,18 @@ class MainAPP extends Common {
     container: HTMLElement,
     initOptions?: InitOptions,
   ): HTMLIFrameElement {
-    initListener(this)
-
     // set src to iframe, for trigger iframe.onload
-    this.iframe.src = this.src
+    this.iframe.src = this.qsStringify(this.src, initOptions?.query)
     container.append(this.iframe)
+
+    // init postMessage, must before load, if not iframe.contentWindow maybe null
+    initPostMessage(this, this.iframe.contentWindow!)
 
     // polling connect
     const pollConnectFn = () => {
-      // if DEFAULT_MESSAGE_TYPE.CONNECTING event had registered, emit it
-      if (this.has(DEFAULT_MESSAGE_TYPE.CONNECTING)) {
-        this.emit<string>(
-          DEFAULT_MESSAGE_TYPE.CONNECTING,
-          'easy iframe is connecting',
-        )
-      }
-
       // send init message to sub app, until sub app is init, payload is main app origin, use to sub app check sub's targetOrigin
-      this.postMessage?.({
-        type: DEFAULT_MESSAGE_TYPE_INIT,
+      this.emitMessage?.({
+        type: DEFAULT_MESSAGE_TYPE.SUB_INIT,
         payload: window.location.origin,
       })
     }
@@ -83,21 +61,13 @@ class MainAPP extends Common {
         } else {
           console.error(error)
         }
-        return this.off(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
       }
 
-      // if DEFAULT_MESSAGE_TYPE.CONNECTED had be registered, emit it
-      if (this.has(DEFAULT_MESSAGE_TYPE.CONNECTED)) {
-        this.emit<string>(DEFAULT_MESSAGE_TYPE.CONNECTED, subOrigin)
-      }
-
-      this.off(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
+      this.off(DEFAULT_MESSAGE_TYPE.MAIN_INIT, initSuccess)
     }
     // wait for sub app init
-    this.on<string>(DEFAULT_MESSAGE_TYPE_INIT, initSuccess)
+    this.on<string>(DEFAULT_MESSAGE_TYPE.MAIN_INIT, initSuccess)
     this.iframe.onload = () => {
-      // init postMessage, must before load, if not iframe.contentWindow maybe null
-      initPostMessage(this, this.iframe.contentWindow!)
       // start polling
       pollConnect.start().catch(this.onError)
     }
@@ -112,9 +82,10 @@ class SubAPP extends Common {
   }
 
   init(): void {
+    // init postMessage, must before load, if not iframe.contentWindow maybe null
     initPostMessage(this, window.parent)
-    initListener(this)
-    this.on<string>(DEFAULT_MESSAGE_TYPE_INIT, (mainOrigin: string) => {
+
+    this.on<string>(DEFAULT_MESSAGE_TYPE.SUB_INIT, (mainOrigin) => {
       // verify origin, main app origin is mainApp's window.location.origin, it should be same as subApp's targetOrigin
       if (this.targetOrigin !== '*' && mainOrigin !== this.targetOrigin) {
         const error = {
@@ -126,9 +97,12 @@ class SubAPP extends Common {
         } else {
           console.error(error)
         }
+      } else if (!this.targetOrigin || this.targetOrigin === '*') {
+        // if targetOrigin is *, then it will not verify origin
+        this.targetOrigin = mainOrigin
       }
-      this.postMessage?.({
-        type: DEFAULT_MESSAGE_TYPE_INIT,
+      this.emitMessage?.({
+        type: DEFAULT_MESSAGE_TYPE.MAIN_INIT,
         payload: window.location.origin,
       })
     })
