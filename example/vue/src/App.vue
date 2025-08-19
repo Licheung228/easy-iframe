@@ -20,6 +20,9 @@ onMounted(async () => {
     loading.value = false
     console.log(mainApp.targetOrigin)
   })
+  mainApp.on(DEFAULT_MESSAGE_TYPE.CONNECTING, () => {
+    console.log('connecting...')
+  })
   mainApp.init(iframeContainerRef.value, {
     interval: 1000,
     maxAttempts: 5,

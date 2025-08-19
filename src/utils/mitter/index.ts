@@ -1,13 +1,8 @@
-import type { Listener, MitterOptions } from './type'
+import type { Listener } from './type'
 export * from './type'
 
 export class Mitter {
   private listeners: Map<string, Set<Listener>> = new Map()
-  onError?: (err: any) => void
-
-  constructor({ onError }: MitterOptions) {
-    this.onError = onError
-  }
 
   public has(type: string): boolean {
     return this.listeners.has(type)
@@ -21,23 +16,13 @@ export class Mitter {
 
   public emit<P = any>(type: string, payload?: P): void {
     const listeners = this.listeners.get(type)
-    if (!listeners) {
-      return this.onError?.({
-        type: 'event',
-        payload: `emit event "${type}" failed, listeners not found`,
-      })
-    }
+    if (!listeners) return
     listeners.forEach((listener) => listener(payload))
   }
 
   public off(type: string, listener: Listener<any>): void {
     const listeners = this.listeners.get(type)
-    if (!listeners) {
-      return this.onError?.({
-        type: 'event',
-        payload: `off event "${type}" failed, listeners not found`,
-      })
-    }
+    if (!listeners) return
     listeners.delete(listener)
   }
 
