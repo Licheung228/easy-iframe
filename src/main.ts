@@ -32,6 +32,11 @@ class MainAPP extends Common {
 
     // polling connect
     const pollConnectFn = () => {
+      // 则触发 CONNECTINNG 事件, 表示 父子容器正在连接
+      this.emitMessage?.({
+        type: DEFAULT_MESSAGE_TYPE.CONNECTING,
+        payload: this.iframe.src,
+      })
       // send init message to sub app, until sub app is init, payload is main app origin, use to sub app check sub's targetOrigin
       this.emitMessage?.({
         type: DEFAULT_MESSAGE_TYPE.SUB_INIT,
@@ -62,7 +67,8 @@ class MainAPP extends Common {
           console.error(error)
         }
       }
-
+      // 触发 CONNECTED 事件, 表示 父子容器连接成功
+      this.emit(DEFAULT_MESSAGE_TYPE.CONNECTED, subOrigin)
       this.off(DEFAULT_MESSAGE_TYPE.MAIN_INIT, initSuccess)
     }
     // wait for sub app init

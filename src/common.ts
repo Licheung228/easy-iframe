@@ -1,17 +1,19 @@
 import type { DEFAULT_MESSAGE_TYPE } from './constant'
 import { initListener } from './init'
 import type { Options } from './type'
-import type { Message, MitterOptions } from './utils/mitter'
+import type { Message } from './utils/mitter'
 import { Mitter } from './utils/mitter'
 
 // Comomon, abstarct class
 export abstract class Common extends Mitter {
   postMessage?: (message: Message<DEFAULT_MESSAGE_TYPE | string>) => void
+  onError?: (err: any) => void
   targetOrigin?: string = '*'
 
-  constructor(options: MitterOptions & Options) {
-    super({ onError: options.onError })
+  constructor(options: Options) {
+    super()
     this.targetOrigin = options.targetOrigin || '*'
+    this.onError = options.onError
     initListener(this)
   }
 
