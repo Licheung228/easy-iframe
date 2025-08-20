@@ -8,7 +8,7 @@ import { subApp } from '@/libs/easy-iframe'
 
 const Button: FC<{ target: 'vite' | 'react'; disabled: boolean }> = ({
   target,
-  disabled
+  disabled,
 }) => {
   return (
     <button
@@ -25,11 +25,13 @@ const Button: FC<{ target: 'vite' | 'react'; disabled: boolean }> = ({
 
 const Home: FC = observer(() => {
   useEffect(() => {
-    subApp.on('switch', () => {
+    const handler = () => {
       favoriteStore.changeFavorite(
-        favoriteStore.favorite === 'vite' ? 'react' : 'vite'
+        favoriteStore.favorite === 'vite' ? 'react' : 'vite',
       )
-    })
+    }
+    subApp.on('switch', handler)
+    return () => subApp.off('switch', handler)
   }, [])
 
   return (
@@ -46,7 +48,10 @@ const Home: FC = observer(() => {
         `}
       >
         <Vite />
-        <Button target="vite" disabled={favoriteStore.favorite === 'vite'} />
+        <Button
+          target="vite"
+          disabled={favoriteStore.favorite === 'vite'}
+        />
       </div>
       <div
         className={`
@@ -56,7 +61,10 @@ const Home: FC = observer(() => {
         `}
       >
         <React />
-        <Button target="react" disabled={favoriteStore.favorite === 'react'} />
+        <Button
+          target="react"
+          disabled={favoriteStore.favorite === 'react'}
+        />
       </div>
       <div className="absolute translate-x-[50%] right-[50%] top-[10%]">
         <Lic favorite={favoriteStore.favorite} />
