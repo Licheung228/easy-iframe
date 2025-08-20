@@ -176,6 +176,8 @@ function App() {
     sub.on('add', () => {
       setCount(count => count + 1)
     })
+
+    return () => sub.clear('add')
   }, [])
 
   return (
