@@ -12,7 +12,8 @@ class MainAPP extends Common {
     onError,
     src,
   }: Pick<Options, 'onError'> & { src: string }) {
-    super({ onError, targetOrigin: src })
+    const url = new URL(src)
+    super({ onError, targetOrigin: url.origin })
     this.src = src
     this.iframe = window.document.createElement('iframe')
     this.iframe.width = '100%'
@@ -24,7 +25,8 @@ class MainAPP extends Common {
     initOptions?: InitOptions,
   ): HTMLIFrameElement {
     // set src to iframe, for trigger iframe.onload
-    this.iframe.src = this.qsStringify(this.src, initOptions?.query)
+    // use URL to handle origin register, so don't need to handle query params
+    this.iframe.src = this.src
     container.append(this.iframe)
 
     // init postMessage, must before load, if not iframe.contentWindow maybe null
@@ -84,7 +86,8 @@ class MainAPP extends Common {
 
 class SubAPP extends Common {
   constructor({ onError, targetOrigin }: Options) {
-    super({ onError, targetOrigin })
+    const url = targetOrigin ? new URL(targetOrigin) : { origin: '*' }
+    super({ onError, targetOrigin: url.origin })
   }
 
   init(): void {
