@@ -1,6 +1,6 @@
 {
   "name": "easy-iframe",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "iframe solution",
   "type": "module",
   "files": [
@@ -8,9 +8,9 @@
   ],
   "exports": {
     ".": {
-      "import": "./index.mjs",
-      "require": "./index.cjs",
-      "types": "./types/index.d.ts"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "license": "MIT",
